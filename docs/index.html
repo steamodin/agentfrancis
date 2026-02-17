@@ -7,11 +7,79 @@
   <meta charset="UTF-8">
   <meta name="keywords" content="ELDER SIGN, OCCULT, OUTSIDE, TRUTH, CONSPIRACY">
   <meta name="description" content="THE ELDER SIGN WARDS THEM OFF">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
 
  <style>
+.win95-window {
+  display: none;
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 360px;
+  background: #c0c0c0;
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 14px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  z-index: 9999;
+}
+
+/* Title bar */
+.win95-titlebar {
+  background: #000080;
+  color: white;
+  padding: 4px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+/* Close button */
+.win95-close {
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Window body */
+.win95-body {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  color: black;
+}
+
+.win95-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+/* Footer */
+.win95-footer {
+  padding: 8px;
+  text-align: center;
+}
+
+/* Buttons */
+.win95-button {
+  min-width: 75px;
+  padding: 4px 10px;
+  background: #c0c0c0;
+  border: 2px solid;
+  border-color: #fff #000 #000 #fff;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.win95-button:active,
+.win95-close:active {
+  border-color: #000 #fff #fff #000;
+}
 body {
   filter: contrast(110%) saturate(120%);
 }
@@ -161,6 +229,21 @@ a, button {
 </head>
 
 <body>
+<div id="win95Modal" class="win95-window">
+  <div class="win95-titlebar">
+    <span>System Warning</span>
+    <button class="win95-close" aria-label="Close">✕</button>
+  </div>
+
+  <div class="win95-body">
+    <div class="win95-icon">⚠️</div>
+    <p>TURN BACK.<br>You are too close.</p>
+  </div>
+
+  <div class="win95-footer">
+    <button class="win95-button">OK</button>
+  </div>
+</div>
 <div class="crt-overlay"></div>
 <marquee behavior="alternate" scrollamount="5">
   ⚠️⚠️ THEY DO NOT WANT YOU TO KNOW ⚠️⚠️
@@ -295,10 +378,23 @@ a, button {
   ⛤ ⛤ ⛤ SOON THE STARS WILL BE RIGHT ⛤ ⛤ ⛤
 </marquee>
 <script>
-  window.addEventListener("scroll", function () {
-    if (window.scrollY > 600) {
-      alert("TURN BACK. YOU ARE TOO CLOSE.");
-      window.removeEventListener("scroll", arguments.callee);
+  const modal = document.getElementById("win95Modal");
+  const closeButtons = modal.querySelectorAll("button");
+
+  function showModal() {
+    modal.style.display = "block";
+  }
+
+  closeButtons.forEach(btn =>
+    btn.addEventListener("click", () => {
+      modal.style.display = "none";
+    })
+  );
+
+  window.addEventListener("scroll", function onScroll() {
+    if (window.scrollY > 340) {
+      showModal();
+      window.removeEventListener("scroll", onScroll);
     }
   });
 </script>
