@@ -9,6 +9,88 @@
   <meta name="description" content="THE ELDER SIGN WARDS THEM OFF">
 
  <style>
+/* =========================
+   CHROMATIC ABERRATION
+   ========================= */
+@keyframes chromaDrift {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(0.5px, -0.5px); }
+  100% { transform: translate(0, 0); }
+}
+
+.chromatic {
+  animation: chromaDrift 3s infinite ease-in-out;
+}
+.chromatic {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998; /* just under crt-overlay */
+  mix-blend-mode: screen;
+}
+
+.chromatic::before,
+.chromatic::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+}
+
+.chromatic::before {
+  filter: blur(0.8px);
+  transform: translate(1px, 0);
+  background: rgba(255, 0, 0, 0.08);
+}
+
+.chromatic::after {
+  filter: blur(0.8px);
+  transform: translate(-1px, 0);
+  background: rgba(0, 0, 255, 0.08);
+}
+
+/* Stronger state (used during freak-out) */
+.chromatic.intense::before {
+  transform: translate(3px, 1px);
+  background: rgba(255, 0, 0, 0.18);
+}
+
+.chromatic.intense::after {
+  transform: translate(-3px, -1px);
+  background: rgba(0, 0, 255, 0.18);
+}
+/* SIGIL CORRUPTION EFFECTS */
+#elderSigil {
+  transition: filter 0.2s;
+  user-select: none;
+}
+
+#elderSigil.corrupting {
+  filter: blur(1.5px) contrast(150%);
+  animation: visionShake 0.4s infinite;
+}
+
+.glitch-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10000;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,0,0,0.05),
+      rgba(255,0,0,0.05) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+  animation: glitchFlash 0.15s infinite;
+}
+
+@keyframes glitchFlash {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.3; }
+}
 .win95-window {
   display: none;
   position: fixed;
@@ -166,7 +248,7 @@ a, button {
    cursor: url('https://cdn.cursors-4u.net/previews/bloody-knife-5f2f3651-32.webp') 33 33, auto !important;
 }
   body {
-    background: black url("https://www.transparenttextures.com/patterns/stardust.png");
+    background: black url("https://geocities.restorativland.org/Area51/Shadowlands/1268/altar.jpg");
     color: #00ff00;
     font-family: "Comic Sans MS", "Courier New", monospace;
     text-align: center;
@@ -229,6 +311,8 @@ a, button {
 </head>
 
 <body>
+<div class="crt-overlay"></div>
+<div class="chromatic" id="chromaticAberration"></div>
 <div id="win95Modal" class="win95-window">
   <div class="win95-titlebar">
     <span>System Warning</span>
@@ -244,7 +328,6 @@ a, button {
     <button class="win95-button">OK</button>
   </div>
 </div>
-<div class="crt-overlay"></div>
 <marquee behavior="alternate" scrollamount="5">
   ⚠️⚠️ THEY DO NOT WANT YOU TO KNOW ⚠️⚠️
 </marquee>
@@ -301,7 +384,7 @@ a, button {
 <div id="elder-sign-zone">
   <h2>THE SIGN (RECONSTRUCTED)</h2>
 
-  <pre>
+ <pre id="elderSigil" data-original>
     @                                                                         
  @@@                        @@@@@                                         
   @@@@@                    @@@@@@@@                                       
@@ -332,8 +415,7 @@ a, button {
              @@@@@@@                                                      
              @@@@@@                                                       
              @@@@                                                         
-             
-  </pre>
+</pre>
 </div>
 
   <h2>INSCRIBING RITUAL</h2>
@@ -377,26 +459,67 @@ a, button {
 <marquee behavior="scroll" direction="left" scrollamount="3">
   ⛤ ⛤ ⛤ SOON THE STARS WILL BE RIGHT ⛤ ⛤ ⛤
 </marquee>
+<audio id="win95ErrorSound" preload="auto">
+  <source src="Windows_95_-_Error_Sound_Effect_(getmp3.pro).mp3" type="audio/wav">
+</audio>
+
 <script>
-  const modal = document.getElementById("win95Modal");
-  const closeButtons = modal.querySelectorAll("button");
+const modal = document.getElementById("win95Modal");
+const closeButtons = modal.querySelectorAll("button");
+const errorSound = document.getElementById("win95ErrorSound");
 
-  function showModal() {
-    modal.style.display = "block";
+let modalShown = false; // 🔒 global lock
+
+function showModal() {
+  if (modalShown) return; // prevent repeat
+  modalShown = true;
+
+  modal.style.display = "block";
+
+  // play sound safely
+  errorSound.currentTime = 0;
+  errorSound.play().catch(() => {});
+}
+
+closeButtons.forEach(btn =>
+  btn.addEventListener("click", () => {
+    modal.style.display = "none";
+  })
+);
+
+// Scroll trigger (fires once)
+window.addEventListener("scroll", function onScroll() {
+  if (window.scrollY > 150) {
+    showModal();
+    window.removeEventListener("scroll", onScroll);
   }
+});
+</script>
+<script>
+const sigil = document.getElementById("elderSigil");
+const originalText = sigil.textContent;
+const corruptionChars = ["@", "#", "%", "&", "█", "▓", "▒", "░", "*", "+", "?", "!"];
 
-  closeButtons.forEach(btn =>
-    btn.addEventListener("click", () => {
-      modal.style.display = "none";
-    })
-  );
+let corruptionLevel = 0;
+let hasFreakedOut = false;
 
-  window.addEventListener("scroll", function onScroll() {
-    if (window.scrollY > 340) {
-      showModal();
-      window.removeEventListener("scroll", onScroll);
+// Slowly corrupt characters
+function corruptSigil() {
+  let chars = originalText.split("");
+  let newText = chars.map(ch => {
+    if (ch !== " " && Math.random() < corruptionLevel) {
+      return corruptionChars[Math.floor(Math.random() * corruptionChars.length)];
     }
-  });
+    return ch;
+  }).join("");
+
+  sigil.textContent = newText;
+  corruptionLevel = Math.min(corruptionLevel + 0.002, 0.08);
+}
+
+// Run corruption loop
+setInterval(corruptSigil, 600);
+
 </script>
 </body>
 </html>
