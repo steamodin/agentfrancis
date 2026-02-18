@@ -1,243 +1,258 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>HEED THE ELDER SIGN</title>
+<link rel="preload" as="image" href="https://raw.githubusercontent.com/steamodin/agentfrancis/main/docs/corrupt404.gif">
+<title>HEED THE ELDER SIGN</title>
 
-  <!-- META CHAOS -->
-  <meta charset="UTF-8">
-  <meta name="keywords" content="ELDER SIGN, OCCULT, OUTSIDE, TRUTH, CONSPIRACY">
-  <meta name="description" content="THE ELDER SIGN WARDS THEM OFF">
+<meta charset="UTF-8">
 
- <style>
+<style>
 /* =========================
-   CHROMATIC ABERRATION
+   VHS TRACKING LOSS
    ========================= */
-@keyframes chromaDrift {
-  0%   { transform: translate(0, 0); }
-  50%  { transform: translate(0.5px, -0.5px); }
-  100% { transform: translate(0, 0); }
+
+body.vhs-tracking {
+  animation: vhsSkew 0.18s steps(2) infinite;
 }
 
-.chromatic {
-  animation: chromaDrift 3s infinite ease-in-out;
+@keyframes vhsSkew {
+  0%   { transform: skewX(0deg); }
+  25%  { transform: skewX(2deg); }
+  50%  { transform: skewX(-3deg); }
+  75%  { transform: skewX(1deg); }
+  100% { transform: skewX(0deg); }
 }
-.chromatic {
+
+/* Thick tearing bands */
+.vhs-tear {
   position: fixed;
-  inset: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.2),
+    rgba(0,0,0,0.6),
+    rgba(255,255,255,0.2)
+  );
+  mix-blend-mode: difference;
   pointer-events: none;
-  z-index: 9998; /* just under crt-overlay */
-  mix-blend-mode: screen;
+  z-index: 20000;
+  animation: vhsTearMove 0.15s linear infinite;
 }
 
-.chromatic::before,
-.chromatic::after {
-  content: "";
+@keyframes vhsTearMove {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+@keyframes crtModalFlicker {
+  0% { opacity: .6; transform: translateX(0px); }
+  50% { opacity: .9; transform: translateX(1px); }
+  100% { opacity: .7; transform: translateX(0px); }
+}
+.glitch-bar {
   position: absolute;
-  inset: 0;
-  background: inherit;
-}
-
-.chromatic::before {
-  filter: blur(0.8px);
-  transform: translate(1px, 0);
-  background: rgba(255, 0, 0, 0.08);
-}
-
-.chromatic::after {
-  filter: blur(0.8px);
-  transform: translate(-1px, 0);
-  background: rgba(0, 0, 255, 0.08);
-}
-
-/* Stronger state (used during freak-out) */
-.chromatic.intense::before {
-  transform: translate(3px, 1px);
-  background: rgba(255, 0, 0, 0.18);
-}
-
-.chromatic.intense::after {
-  transform: translate(-3px, -1px);
-  background: rgba(0, 0, 255, 0.18);
-}
-/* SIGIL CORRUPTION EFFECTS */
-#elderSigil {
-  transition: filter 0.2s;
-  user-select: none;
-}
-
-#elderSigil.corrupting {
-  filter: blur(1.5px) contrast(150%);
-  animation: visionShake 0.4s infinite;
-}
-
-.glitch-overlay {
-  position: fixed;
-  inset: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.15);
+  mix-blend-mode: difference;
   pointer-events: none;
-  z-index: 10000;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255,0,0,0.05),
-      rgba(255,0,0,0.05) 1px,
-      transparent 2px,
-      transparent 4px
-    );
-  animation: glitchFlash 0.15s infinite;
+  animation: glitchMove 0.2s linear infinite;
 }
 
-@keyframes glitchFlash {
-  0% { opacity: 0.2; }
-  50% { opacity: 0.6; }
-  100% { opacity: 0.3; }
+@keyframes glitchMove {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
 }
-.win95-window {
-  display: none;
+#elderSigil {
+  height: 405px;
+  overflow: hidden;
+  line-height: 1em;
+}
+/* =========================
+   WIN95 ERROR POPUPS
+   ========================= */
+.win95-body {
+  position: relative;
+}
+
+.win95-body.glitch {
+  animation: rgbShift 0.12s infinite;
+}
+
+@keyframes rgbShift {
+  0%   { text-shadow: 1px 0 red, -1px 0 cyan; }
+  50%  { text-shadow: -1px 0 red, 1px 0 cyan; }
+  100% { text-shadow: 1px 0 red, -1px 0 cyan; }
+}
+win95-error {
   position: fixed;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 360px;
+  width: 320px;
   background: #c0c0c0;
   font-family: "MS Sans Serif", Tahoma, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   border: 2px solid #000;
   box-shadow: 4px 4px 0 #000;
-  z-index: 9999;
+  z-index: 10001;
+  animation: popIn 0.12s steps(2);
+  overflow: hidden;
 }
 
-/* Title bar */
+/* CRT scanline overlay */
+.win95-error {
+  position: fixed;
+  width: 320px;
+  background: #c0c0c0;
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 13px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  z-index: 10001;
+  animation: popIn 0.12s steps(2);
+  overflow: hidden;
+  box-sizing: border-box;   /* IMPORTANT */
+}
+
+/* FULL-WIDTH CRT OVERLAY */
+.win95-error::after {
+  content: "";
+  position: absolute;
+
+  /* stretch beyond border box slightly */
+  top: 0;
+  left: -2px;
+  width: calc(100% + 4px);
+  height: 100%;
+
+  pointer-events: none;
+
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 1px,
+    rgba(0,0,0,0.18) 2px
+  );
+
+  mix-blend-mode: multiply;
+  animation: crtModalFlicker 0.15s infinite;
+}
+
+@keyframes crtModalFlicker {
+  0% { opacity: .5 }
+  50% { opacity: .8 }
+  100% { opacity: .6 }
+}
+.win95-error {
+  position: fixed;
+  width: 320px;
+  background: #c0c0c0;
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 13px;
+  border: 2px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  z-index: 10001;
+  animation: popIn 0.12s steps(2);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.95); }
+  to   { transform: scale(1); }
+}
+
 .win95-titlebar {
   background: #000080;
   color: white;
   padding: 4px 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   font-weight: bold;
 }
 
-/* Close button */
-.win95-close {
-  background: #c0c0c0;
-  border: 2px solid;
-  border-color: #fff #000 #000 #fff;
-  width: 18px;
-  height: 18px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-/* Window body */
 .win95-body {
   display: flex;
-  gap: 12px;
-  padding: 16px;
+  gap: 10px;
+  padding: 14px;
   color: black;
 }
 
 .win95-icon {
-  font-size: 32px;
-  line-height: 1;
+  font-size: 28px;
 }
 
-/* Footer */
 .win95-footer {
-  padding: 8px;
+  padding: 6px;
   text-align: center;
 }
 
-/* Buttons */
 .win95-button {
-  min-width: 75px;
-  padding: 4px 10px;
+  padding: 3px 12px;
   background: #c0c0c0;
   border: 2px solid;
   border-color: #fff #000 #000 #fff;
-  font-family: inherit;
   cursor: pointer;
 }
 
-.win95-button:active,
-.win95-close:active {
-  border-color: #000 #fff #fff #000;
-}
-body {
-  filter: contrast(110%) saturate(120%);
-}
-.crt-overlay::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      to right,
-      rgba(255, 0, 0, 0.03),
-      rgba(0, 255, 0, 0.02),
-      rgba(0, 0, 255, 0.03)
-    );
-  mix-blend-mode: screen;
-}
-@keyframes crtWarp {
-  0% {
-    transform: scaleY(0.98) skewX(1deg);
-    filter: blur(2px);
-  }
-  100% {
-    transform: none;
-    filter: none;
-  }
+/* =========================
+   CORRUPT BACKGROUND FLASH
+   ========================= */
+body.corrupt-flash {
+  background-image: url("http://raw.githubusercontent.com/steamodin/agentfrancis/main/docs/corrupt404.gif") !important;
+  background-repeat: repeat;
+  background-size: 700px 700px;
+  background-attachment: fixed;
+  filter: hue-rotate(20deg) contrast(140%) saturate(160%);
 }
 
-body {
-  animation: crtWarp 0.4s ease-out;
-}
 /* =========================
-   CRT SCREEN SIMULATION
+   BASE PAGE STYLES
    ========================= */
+body {
+  background: black url("https://geocities.restorativland.org/Area51/Shadowlands/1268/altar.jpg");
+  color: #00ff00;
+  font-family: "Comic Sans MS", monospace;
+  text-align: center;
+  margin: 0;
+}
+
+.container {
+  width: 760px;
+  margin: auto;
+  border: 4px ridge red;
+  background: black;
+  padding: 10px;
+}
 
 .crt-overlay {
-  pointer-events: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-
-  /* Scanlines */
-  background:
-    linear-gradient(
-      rgba(0, 0, 0, 0) 50%,
-      rgba(0, 0, 0, 0.15) 50%
-    );
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(0,0,0,0) 50%,
+    rgba(0,0,0,0.15) 50%
+  );
   background-size: 100% 2px;
-
-  /* Vignette */
-  box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.9);
-
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.9);
   animation: crtFlicker 0.15s infinite;
+  z-index: 9999;
 }
 
-/* Subtle flicker */
 @keyframes crtFlicker {
-  0%   { opacity: 0.6; }
-  50%  { opacity: 0.9; }
-  100% { opacity: 0.7; }
-}
-/* ELDER SIGN PERCEPTION DISTORTION */
-@keyframes visionShake {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-3px, 2px); }
-  40%  { transform: translate(3px, -2px); }
-  60%  { transform: translate(-2px, -3px); }
-  80%  { transform: translate(2px, 3px); }
-  100% { transform: translate(0, 0); }
+  0% { opacity: .6 }
+  50% { opacity: .9 }
+  100% { opacity: .7 }
 }
 
-.distorted {
-  animation: visionShake 0.6s linear 3;
-  filter: blur(2px) contrast(130%);
+.chromatic {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.chromatic.intense::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(255,0,0,.2);
 }
 /* GOTHIC BLOOD KNIFE CURSOR */
 body {
@@ -307,30 +322,16 @@ a, button {
     font-size: 14px;
     color: orange;
   }
+
 </style>
 </head>
 
 <body>
+
 <div class="crt-overlay"></div>
 <div class="chromatic" id="chromaticAberration"></div>
-<div id="win95Modal" class="win95-window">
-  <div class="win95-titlebar">
-    <span>System Warning</span>
-    <button class="win95-close" aria-label="Close">✕</button>
-  </div>
 
-  <div class="win95-body">
-    <div class="win95-icon">⚠️</div>
-    <p>TURN BACK.<br>You are too close.</p>
-  </div>
-
-  <div class="win95-footer">
-    <button class="win95-button">OK</button>
-  </div>
-</div>
-<marquee behavior="alternate" scrollamount="5">
-  ⚠️⚠️ THEY DO NOT WANT YOU TO KNOW ⚠️⚠️
-</marquee>
+<marquee>⚠️⚠️ THEY DO NOT WANT YOU TO KNOW ⚠️⚠️</marquee>
 
 <div class="container">
 
@@ -459,67 +460,225 @@ a, button {
 <marquee behavior="scroll" direction="left" scrollamount="3">
   ⛤ ⛤ ⛤ SOON THE STARS WILL BE RIGHT ⛤ ⛤ ⛤
 </marquee>
-<audio id="win95ErrorSound" preload="auto">
-  <source src="Windows_95_-_Error_Sound_Effect_(getmp3.pro).mp3" type="audio/wav">
-</audio>
+
+
+<p>PRINT IT. MEMORIZE IT. BURN IT.</p>
+</div>
 
 <script>
-const modal = document.getElementById("win95Modal");
-const closeButtons = modal.querySelectorAll("button");
-const errorSound = document.getElementById("win95ErrorSound");
+/* =========================
+   INITIAL SETUP
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
 
-let modalShown = false; // 🔒 global lock
+  const elderZone = document.getElementById("elder-sign-zone");
+  const chroma = document.getElementById("chromaticAberration");
+  const sigil = document.getElementById("elderSigil");
 
-function showModal() {
-  if (modalShown) return; // prevent repeat
-  modalShown = true;
+  /* Fix marquee not starting immediately */
+  document.querySelectorAll("marquee").forEach(m => {
+    m.start();
+  });
 
-  modal.style.display = "block";
+  /* =========================
+     STATE
+  ========================= */
+  let hasSeenSign = false;
+  let corruptionActive = false;
+  let flashInProgress = false;
 
-  // play sound safely
-  errorSound.currentTime = 0;
-  errorSound.play().catch(() => {});
-}
+  const originalText = sigil.textContent;
+  const corruptionChars = ["@", "#", "%", "&", "█", "▓", "▒", "░", "*", "+", "?", "!"];
+  let corruptionLevel = 0;
 
-closeButtons.forEach(btn =>
-  btn.addEventListener("click", () => {
-    modal.style.display = "none";
-  })
-);
+  /* =========================
+     PRELOAD CORRUPTION GIF
+  ========================= */
+  const preloadCorrupt = new Image();
+  preloadCorrupt.src = "https://raw.githubusercontent.com/steamodin/agentfrancis/main/docs/corrupt404.gif";
 
-// Scroll trigger (fires once)
-window.addEventListener("scroll", function onScroll() {
-  if (window.scrollY > 150) {
-    showModal();
-    window.removeEventListener("scroll", onScroll);
+  /* =========================
+     CORRUPTION FLASH
+  ========================= */
+  function corruptFlash(duration = 400) {
+    if (!corruptionActive || flashInProgress) return;
+
+    flashInProgress = true;
+    document.body.classList.add("corrupt-flash");
+    chroma.classList.add("intense");
+
+    setTimeout(() => {
+      document.body.classList.remove("corrupt-flash");
+      chroma.classList.remove("intense");
+      flashInProgress = false;
+    }, duration);
   }
+
+  function scheduleRandomFlash() {
+    setInterval(() => {
+      if (corruptionActive) {
+        corruptFlash(200 + Math.random() * 300);
+      }
+    }, 4000 + Math.random() * 3000);
+  }
+
+  /* =========================
+     MODALS
+  ========================= */
+  const errorMessages = [
+    "An illegal operation has occurred.",
+    "General protection fault.",
+    "This program has performed an invalid action.",
+    "A fatal exception has occurred at 0x0BAD."
+  ];
+
+  function spawnWin95Error() {
+    if (!corruptionActive) return;
+
+    const container = document.querySelector(".container");
+    const r = container.getBoundingClientRect();
+
+    const zones = [
+      { xMin: 10, xMax: r.left - 340 },
+      { xMin: r.right + 20, xMax: window.innerWidth - 330 }
+    ].filter(z => z.xMax > z.xMin);
+
+    if (!zones.length) return;
+
+    const z = zones[Math.floor(Math.random() * zones.length)];
+    const x = Math.random() * (z.xMax - z.xMin) + z.xMin;
+    const y = Math.random() * (window.innerHeight - 200) + 20;
+
+    const win = document.createElement("div");
+    win.className = "win95-error";
+    win.style.left = x + "px";
+    win.style.top = y + "px";
+
+    win.innerHTML = `
+      <div class="win95-titlebar">Error</div>
+      <div class="win95-body glitch">
+        <div class="win95-icon">❌</div>
+        <div>${errorMessages[Math.floor(Math.random() * errorMessages.length)]}</div>
+      </div>
+      <div class="win95-footer">
+        <button class="win95-button">OK</button>
+      </div>`;
+
+    win.querySelector("button").onclick = () => win.remove();
+    document.body.appendChild(win);
+
+    /* glitch bars */
+    for (let i = 0; i < Math.floor(Math.random() * 3) + 1; i++) {
+      const bar = document.createElement("div");
+      bar.className = "glitch-bar";
+      bar.style.top = Math.random() * 200 + "px";
+      bar.style.animationDuration = (0.1 + Math.random() * 0.3) + "s";
+      win.appendChild(bar);
+    }
+  }
+
+  function scheduleErrors() {
+    setInterval(() => {
+      if (corruptionActive) {
+        spawnWin95Error();
+      }
+    }, 5000 + Math.random() * 5000);
+  }
+
+  /* =========================
+     VHS TRACKING
+  ========================= */
+  function triggerVHSTracking() {
+    if (!corruptionActive) return;
+
+    document.body.classList.add("vhs-tracking");
+
+    const tearCount = Math.floor(Math.random() * 3) + 1;
+    const tears = [];
+
+    for (let i = 0; i < tearCount; i++) {
+      const tear = document.createElement("div");
+      tear.className = "vhs-tear";
+      tear.style.top = Math.random() * window.innerHeight + "px";
+      tear.style.animationDuration = (0.1 + Math.random() * 0.3) + "s";
+      document.body.appendChild(tear);
+      tears.push(tear);
+    }
+
+    document.body.style.filter =
+      "contrast(140%) saturate(160%) hue-rotate(" + (Math.random() * 60) + "deg)";
+
+    setTimeout(() => {
+      document.body.classList.remove("vhs-tracking");
+      document.body.style.filter = "";
+      tears.forEach(t => t.remove());
+    }, 250 + Math.random() * 250);
+  }
+
+  function scheduleTracking() {
+    setInterval(() => {
+      if (corruptionActive) {
+        triggerVHSTracking();
+      }
+    }, 6000 + Math.random() * 6000);
+  }
+
+  /* =========================
+     SIGIL CORRUPTION LOOP
+  ========================= */
+  setInterval(() => {
+    if (!sigil) return;
+
+    let chars = originalText.split("");
+    let newText = chars.map(ch => {
+      if (ch !== " " && Math.random() < corruptionLevel) {
+        return corruptionChars[Math.floor(Math.random() * corruptionChars.length)];
+      }
+      return ch;
+    }).join("");
+
+    sigil.textContent = newText;
+    corruptionLevel = Math.min(corruptionLevel + 0.002, 0.08);
+  }, 600);
+
+  /* =========================
+     SCROLL OBSERVER
+  ========================= */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+
+      if (e.isIntersecting) {
+        corruptionActive = true;
+
+        if (!hasSeenSign) {
+          hasSeenSign = true;
+          corruptFlash(600);
+          spawnWin95Error(); // immediate first modal
+        }
+
+      } else {
+        corruptionActive = false;
+
+        document.body.classList.remove("corrupt-flash");
+        chroma.classList.remove("intense");
+        document.body.classList.remove("vhs-tracking");
+      }
+
+    });
+  }, { threshold: 0.4 });
+
+  observer.observe(elderZone);
+
+  /* =========================
+     START BACKGROUND SYSTEMS
+  ========================= */
+  scheduleRandomFlash();
+  scheduleErrors();
+  scheduleTracking();
+
 });
 </script>
-<script>
-const sigil = document.getElementById("elderSigil");
-const originalText = sigil.textContent;
-const corruptionChars = ["@", "#", "%", "&", "█", "▓", "▒", "░", "*", "+", "?", "!"];
 
-let corruptionLevel = 0;
-let hasFreakedOut = false;
 
-// Slowly corrupt characters
-function corruptSigil() {
-  let chars = originalText.split("");
-  let newText = chars.map(ch => {
-    if (ch !== " " && Math.random() < corruptionLevel) {
-      return corruptionChars[Math.floor(Math.random() * corruptionChars.length)];
-    }
-    return ch;
-  }).join("");
-
-  sigil.textContent = newText;
-  corruptionLevel = Math.min(corruptionLevel + 0.002, 0.08);
-}
-
-// Run corruption loop
-setInterval(corruptSigil, 600);
-
-</script>
 </body>
 </html>
